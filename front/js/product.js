@@ -7,22 +7,22 @@ console.log(idProductActif);
 
 
 
-fetch("http://localhost:3000/api/products")
+fetch("http://localhost:3000/api/products/" + idProductActif)
   .then(function(res) {
     if (res.ok) {
       return res.json();
     }
   })
-  .then(function(value) {
-    console.log(value);
-    let objectActif = value.find(element => element._id === idProductActif);
+  .then(function(objectActif) {
     console.log(objectActif);
-    document.getElementById("title").innerHTML = `${objectActif.name}`;
+    //let objectActif = value.find(element => element._id === idProductActif);
+    console.log(objectActif);
+    document.getElementById("title").innerHTML = objectActif.name;
     let imgCanapé = document.getElementsByClassName("item__img");
     imgCanapé[0].innerHTML = `<img src="${objectActif.imageUrl}" alt="${objectActif.altTxt}">`;
 
-    document.getElementById("price").innerHTML = `${objectActif.price}`;
-    document.getElementById("description").innerHTML = `${objectActif.description}`;
+    document.getElementById("price").innerHTML = objectActif.price;
+    document.getElementById("description").innerHTML = objectActif.description;
 
     for (let chosenColor of objectActif.colors){
         document.getElementById("colors").innerHTML += `<option value="${chosenColor}">${chosenColor}</option>`
