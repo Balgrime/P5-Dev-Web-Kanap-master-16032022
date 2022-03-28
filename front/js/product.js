@@ -7,7 +7,48 @@ console.log(idProductActif);
 
 
 
-fetch("http://localhost:3000/api/products/" + idProductActif)
+async function loadProductActif(){
+    return (await fetch("http://localhost:3000/api/products/" + idProductActif)).json();
+};
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    let productActif = await loadProductActif();
+  } catch {
+    document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
+  }
+});
+
+
+
+loadProductActif().then(function displayData(productActif){
+
+  document.getElementById("title").innerHTML = productActif.name;
+  document.getElementsByClassName("item__img")[0].innerHTML = `<img src="${productActif.imageUrl}" alt="${productActif.altTxt}">`;
+
+  document.getElementById("price").innerHTML = productActif.price;
+  document.getElementById("description").innerHTML = productActif.description;
+
+  for (let chosenColor of productActif.colors){
+      document.getElementById("colors").innerHTML += `<option value="${chosenColor}">${chosenColor}</option>`
+      console.log(chosenColor);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+/*fetch("http://localhost:3000/api/products/" + idProductActif)
   .then(function(res) {
     if (res.ok) {
       return res.json();
@@ -32,4 +73,4 @@ fetch("http://localhost:3000/api/products/" + idProductActif)
   .catch(function(err) {
     document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
     // Une erreur est survenue
-});
+});*/
