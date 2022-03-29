@@ -43,7 +43,46 @@ loadProductActif().then(function displayData(productActif){
 
 
 
+let addToCart = document.getElementById("addToCart");
+let elementJson = {
+  id : idProductActif,
+  quantity : 0,
+  color : "chosenColor"
+}
+let elementLinear = JSON.stringify(elementJson);
 
+let chosenQuantity = parseInt(document.getElementById("quantity").getAttribute("value"));
+console.log(chosenQuantity);
+let elementAlreadyThere = false;
+
+
+function checkElement(){
+  for(let a = 0; a < localStorage.length; a++){
+    if (localStorage.key(a) === idProductActif){
+      elementAlreadyThere = true;
+    };
+    console.log(elementAlreadyThere);
+    console.log(localStorage.key(a));
+  };
+};
+
+
+function addElementToLocalStorageWhenNotAlreadyThere(){
+  localStorage.setItem(idProductActif, elementLinear);
+};
+
+
+function changeQuantityOrColorWhenAlreadyThere(){
+
+};
+
+
+addToCart.addEventListener("click", function(){
+  checkElement();
+  if(elementAlreadyThere == false){
+    addElementToLocalStorageWhenNotAlreadyThere();
+  };
+});
 
 
 
