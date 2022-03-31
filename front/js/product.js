@@ -31,6 +31,7 @@ loadProductActif().then(function displayData(productActif){
   document.getElementById("price").innerHTML = productActif.price;
   document.getElementById("description").innerHTML = productActif.description;
 
+  
   for (let chosenColor of productActif.colors){
       document.getElementById("colors").innerHTML += `<option value="${chosenColor}">${chosenColor}</option>`
       console.log(chosenColor);
@@ -71,7 +72,9 @@ let elementJson = {
 let elementLinear = JSON.stringify(elementJson);
 
 function addElementToLocalStorageWhenNotAlreadyThere(){
-  localStorage.setItem(idProductActif + pickedColor, elementLinear);
+  if(chosenQuantity !== 0 && pickedColor !== ""){
+    localStorage.setItem(idProductActif + pickedColor, elementLinear);
+  };
 };
 
 function checkElement(){
@@ -107,7 +110,9 @@ function replaceElementWithNewQuantity(){
     color : pickedColor
   }
   let replacementElementLinear = JSON.stringify(replacementElementJson);
+  if(chosenQuantity !== 0 && pickedColor !== ""){
   localStorage.setItem(idProductActif + pickedColor, replacementElementLinear);
+  };
 };
 
   checkElement();
