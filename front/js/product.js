@@ -85,15 +85,39 @@ function checkElement(){
   };
 };
 
+let elementJsonAlreadyInBasket = {};
+function changeStringInLocalToJson(){
+  let elementLinearAlreadyInBasket = localStorage.getItem(idProductActif + pickedColor);
+  elementJsonAlreadyInBasket = JSON.parse(elementLinearAlreadyInBasket);
+  console.log(elementJsonAlreadyInBasket);
+};
 
+let newQuantityInBasket = 0;
 function changeQuantityWhenAlreadyThere(){
+  let quantityAlreadyInBasket = parseInt(elementJsonAlreadyInBasket.quantity);
+  console.log(quantityAlreadyInBasket);
+  newQuantityInBasket = quantityAlreadyInBasket + chosenQuantity;
+  console.log(newQuantityInBasket);
+};
 
+function replaceElementWithNewQuantity(){
+  let replacementElementJson = {
+    id : idProductActif,
+    quantity : newQuantityInBasket,
+    color : pickedColor
+  }
+  let replacementElementLinear = JSON.stringify(replacementElementJson);
+  localStorage.setItem(idProductActif + pickedColor, replacementElementLinear);
 };
 
   checkElement();
 
   if(elementAlreadyThere == false){
     addElementToLocalStorageWhenNotAlreadyThere();
+  } else {
+    changeStringInLocalToJson();
+    changeQuantityWhenAlreadyThere();
+    replaceElementWithNewQuantity();
   }
   console.log(chosenQuantity);
   console.log(pickedColor);
