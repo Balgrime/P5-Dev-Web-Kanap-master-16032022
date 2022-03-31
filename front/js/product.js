@@ -55,11 +55,12 @@ addToCart.addEventListener("click", function(){
 let elementAlreadyThere = false;
 
 
-let chosenQuantity = parseInt(document.getElementById("quantity").getAttribute("value"));
+let idQuantity = document.getElementById("quantity");
+let chosenQuantity = parseInt(idQuantity.value);
 console.log(chosenQuantity);
 
 let idColor = document.getElementById("colors");/*.getAttribute("value");*/
-pickedColor = idColor.value;
+let pickedColor = idColor.value;
 console.log(pickedColor);
 
 let elementJson = {
@@ -70,13 +71,14 @@ let elementJson = {
 let elementLinear = JSON.stringify(elementJson);
 
 function addElementToLocalStorageWhenNotAlreadyThere(){
-  localStorage.setItem(idProductActif, elementLinear);
+  localStorage.setItem(idProductActif + pickedColor, elementLinear);
 };
 
 function checkElement(){
   for(let a = 0; a < localStorage.length; a++){
-    if (localStorage.key(a) === idProductActif){
+    if (localStorage.key(a).indexOf(idProductActif) !== -1 && localStorage.key(a).indexOf(pickedColor) !== -1){
       elementAlreadyThere = true;
+      console.log(elementAlreadyThere);
     };
     console.log(elementAlreadyThere);
     console.log(localStorage.key(a));
@@ -84,13 +86,11 @@ function checkElement(){
 };
 
 
-
-
-function changeQuantityOrColorWhenAlreadyThere(){
+function changeQuantityWhenAlreadyThere(){
 
 };
 
-
+  checkElement();
 
   if(elementAlreadyThere == false){
     addElementToLocalStorageWhenNotAlreadyThere();
