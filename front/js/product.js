@@ -43,18 +43,35 @@ loadProductActif().then(function displayData(productActif){
 
 
 
+
+
+
+
 let addToCart = document.getElementById("addToCart");
-let elementJson = {
-  id : idProductActif,
-  quantity : 0,
-  color : "chosenColor"
-}
-let elementLinear = JSON.stringify(elementJson);
+
+addToCart.addEventListener("click", function(){
+
+  
+let elementAlreadyThere = false;
+
 
 let chosenQuantity = parseInt(document.getElementById("quantity").getAttribute("value"));
 console.log(chosenQuantity);
-let elementAlreadyThere = false;
 
+let idColor = document.getElementById("colors");/*.getAttribute("value");*/
+pickedColor = idColor.value;
+console.log(pickedColor);
+
+let elementJson = {
+  id : idProductActif,
+  quantity : chosenQuantity,
+  color : pickedColor
+}
+let elementLinear = JSON.stringify(elementJson);
+
+function addElementToLocalStorageWhenNotAlreadyThere(){
+  localStorage.setItem(idProductActif, elementLinear);
+};
 
 function checkElement(){
   for(let a = 0; a < localStorage.length; a++){
@@ -67,9 +84,6 @@ function checkElement(){
 };
 
 
-function addElementToLocalStorageWhenNotAlreadyThere(){
-  localStorage.setItem(idProductActif, elementLinear);
-};
 
 
 function changeQuantityOrColorWhenAlreadyThere(){
@@ -77,13 +91,13 @@ function changeQuantityOrColorWhenAlreadyThere(){
 };
 
 
-addToCart.addEventListener("click", function(){
-  checkElement();
+
   if(elementAlreadyThere == false){
     addElementToLocalStorageWhenNotAlreadyThere();
-  };
+  }
+  console.log(chosenQuantity);
+  console.log(pickedColor);
 });
-
 
 
 
