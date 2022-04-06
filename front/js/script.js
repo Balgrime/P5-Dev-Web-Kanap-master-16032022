@@ -2,19 +2,19 @@ async function loadProducts(){
   return (await fetch("http://localhost:3000/api/products")).json();
 };
 
-
-
-document.addEventListener("DOMContentLoaded", async () => {
+/*document.addEventListener("DOMContentLoaded", async () => {
   try {
     let value = await loadProducts();
   } catch {
     document.getElementById("items").innerHTML = "<p>Items non chargés, veuillez vérifier la connexion du serveur de l'api</p>"
   }
-});
+});*/
 
 
+loadProducts().then(showValue).catch(showError);
 
-loadProducts().then(function showValue(value){
+
+function showValue(value){
   for (let product of value){
     document.getElementById("items").innerHTML += `<a href="./product.html?id=${product._id}">
                                                       <article>
@@ -23,12 +23,12 @@ loadProducts().then(function showValue(value){
                                                         <p class="productDescription">${product.description}</p>
                                                       </article>
                                                     </a>`
-  }
-});
+  };
+};
 
-
-
-
+function showError(){
+  document.getElementById("items").innerHTML = "<p>Items non chargés, veuillez vérifier la connexion du serveur de l'api</p>"
+};
 
 
 

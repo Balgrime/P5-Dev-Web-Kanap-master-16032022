@@ -5,17 +5,19 @@ let urlSearchParams = new URLSearchParams(urlPageProduct);
 let idProductActif = urlSearchParams.get("id");
 console.log(idProductActif);
 
-
-
 async function loadProductActif(){
     return (await fetch("http://localhost:3000/api/products/" + idProductActif)).json();
 };
 
-
+function addElementToLocalStorageWhenNotAlreadyThere(quantity, color, id, elementLinear){
+  if(quantity !== 0 && color !== ""){
+    localStorage.setItem(id + color, elementLinear);
+  };
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    let productActif = await loadProductActif();
+    await loadProductActif();
   } catch {
     document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
   }
@@ -48,7 +50,7 @@ loadProductActif().then(function displayData(productActif){
 
 
 
-let addToCart = document.getElementById("addToCart");
+/*let addToCart = document.getElementById("addToCart");
 
 addToCart.addEventListener("click", function(){
 
@@ -60,7 +62,7 @@ let idQuantity = document.getElementById("quantity");
 let chosenQuantity = parseInt(idQuantity.value);
 console.log(chosenQuantity);
 
-let idColor = document.getElementById("colors");/*.getAttribute("value");*/
+let idColor = document.getElementById("colors");
 let pickedColor = idColor.value;
 console.log(pickedColor);
 
@@ -70,12 +72,6 @@ let elementJson = {
   color : pickedColor
 }
 let elementLinear = JSON.stringify(elementJson);
-
-function addElementToLocalStorageWhenNotAlreadyThere(){
-  if(chosenQuantity !== 0 && pickedColor !== ""){
-    localStorage.setItem(idProductActif + pickedColor, elementLinear);
-  };
-};
 
 function checkElement(){
   for(let a = 0; a < localStorage.length; a++){
@@ -118,7 +114,7 @@ function replaceElementWithNewQuantity(){
   checkElement();
 
   if(elementAlreadyThere == false){
-    addElementToLocalStorageWhenNotAlreadyThere();
+    addElementToLocalStorageWhenNotAlreadyThere(chosenQuantity, pickedColor, idProductActif, elementLinear);
   } else {
     changeStringInLocalToJson();
     changeQuantityWhenAlreadyThere();
