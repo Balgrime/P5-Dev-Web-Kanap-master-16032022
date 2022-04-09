@@ -69,19 +69,47 @@ let arrayCart = [];
 
 
 
-function addProductToCart(id, color, qty) {
+function addProductToArray(id, color, qty) {
   let cart = new Cart(id + color, qty);
-  arrayCart.push(cart);
-  console.log(arrayCart);
+
+  if(qty !== 0 && color !== ""){
+    arrayCart.push(cart);
+    console.log(arrayCart);
+  };
 };
 
-let productAlreadyThere = false;
-function checkProduct(id, color){
+
+
+
+
+function changeQuantityOfProduct(id, color, chosenQuantity, quantityAlreadyThere){
+  if(chosenQuantity !== 0 && color !== ""){
+    let newQuantity = quantityAlreadyThere + chosenQuantity;
+    let newProduct = new Cart (id + color, newQuantity);
+    arrayCart.splice(productAlreadyThere, 1, newProduct);
+  };
+};
+
+
+
+
+
+
+
+
+
+
+
+function checkProduct(id, color, isProductAlreadyThere, productAlreadyThere, valueProductAlreadyThere){
   for (let a = 0; a<arrayCart.length; a++){
     console.log(arrayCart[a].key);
     if (arrayCart[a].key === (id + color)){
-      productAlreadyThere = true;
+      isProductAlreadyThere = true;
       console.log("le produit y est déjà");
+      productAlreadyThere = arrayCart[a];
+      console.log(productAlreadyThere);
+      valueProductAlreadyThere = arrayCart[a].value;
+      console.log(valueProductAlreadyThere);
     };
   };
 };
@@ -91,14 +119,24 @@ addToCart.addEventListener("click", function(){
   let idColor = document.getElementById("colors");
   let pickedColor = idColor.value;
   
+  let idQuantity = document.getElementById("quantity");
+  let chosenQuantity = parseInt(idQuantity.value);
 
-  checkProduct(idProductActif, pickedColor);
-  if (productAlreadyThere == false){
-    addProductToCart(idProductActif, pickedColor, 6);
+  let valueProductAlreadyThere = 0;
+  let productAlreadyThere = {};
+  let isProductAlreadyThere = false;
+
+
+
+  checkProduct(idProductActif, pickedColor, isProductAlreadyThere, productAlreadyThere, valueProductAlreadyThere);
+  if (isProductAlreadyThere == false){
+    addProductToArray(idProductActif, pickedColor, chosenQuantity);
+  } else {
+    changeQuantityOfProduct(idProductActif, pickedColor, chosenQuantity, valueProductAlreadyThere);
   };
 
   console.log(arrayCart);
-  console.log(productAlreadyThere);
+  console.log(isProductAlreadyThere);
 });
 
 
