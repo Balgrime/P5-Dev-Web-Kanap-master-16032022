@@ -50,9 +50,11 @@ function displayError(){
 
 
 import { Storage } from "./storage.js";
-Storage.save();
-Storage.load();
 
+
+
+
+let arrayCart = [];
 
 class Cart {
   constructor(key, value) {
@@ -61,7 +63,6 @@ class Cart {
   }
 };
 
-let arrayCart = [];
 
 
 
@@ -110,7 +111,16 @@ function checkProduct(id, color){
 };
 
 
+console.log(arrayCart);
+Storage.load(arrayCart);
+console.log(arrayCart);
+
+
 addToCart.addEventListener("click", function(){
+  
+
+
+
   let idColor = document.getElementById("colors");
   let pickedColor = idColor.value;
   
@@ -131,14 +141,14 @@ addToCart.addEventListener("click", function(){
 
 
 
-
-
   if (checkProduct(idProductActif, pickedColor) !== true){
     console.log("le produit n'est pas encore là");
     addProductToArray(idProductActif, pickedColor, chosenQuantity);
+    Storage.save("arrayCart", arrayCart);
   } else {
     console.log("le produit est déjà là");
     changeQuantityOfProduct(idProductActif, pickedColor, chosenQuantity, valueProductAlreadyThere, positionOfProductInArray);
+    Storage.save("arrayCart", arrayCart);
   };
 
   console.log(arrayCart);

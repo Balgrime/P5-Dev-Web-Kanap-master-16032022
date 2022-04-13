@@ -1,13 +1,14 @@
 
 
-
 export let Storage = {
     save(key, value){
-        JSON.stringify(value);
-        console.log("le module est bien importé");
+       //s console.log("le module est bien importé");
+        let linearValue = JSON.stringify(value);
+        localStorage.setItem(key, linearValue);
     },
-    load(key){
-        let Cart = JSON.parse(localStorage.getItem(key));
-        console.log(localStorage.getItem(key));
+    load(arrayCart){
+        arrayCart = JSON.parse(localStorage.getItem("arrayCart"));
+        console.log("le localStorage a bien chargé");
+        console.log(arrayCart);
     }
 };
