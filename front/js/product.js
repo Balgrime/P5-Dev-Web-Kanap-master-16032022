@@ -67,6 +67,19 @@ class Cart {
 
 
 
+/*function load(arrayCart){
+  let objectsInLocal = JSON.parse(localStorage.getItem("arrayCart"));
+  console.log(objectsInLocal);
+
+  for(let key in objectsInLocal){
+
+    let cart = new Cart(objectsInLocal[key].key, objectsInLocal[key].value);
+  
+    arrayCart.push(cart);
+
+  };
+};*/
+
 
 
 
@@ -112,7 +125,7 @@ function checkProduct(id, color){
 
 
 console.log(arrayCart);
-Storage.load(arrayCart);
+Storage.load(arrayCart, Cart);
 console.log(arrayCart);
 
 

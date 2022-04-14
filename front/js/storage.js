@@ -6,9 +6,16 @@ export let Storage = {
         let linearValue = JSON.stringify(value);
         localStorage.setItem(key, linearValue);
     },
-    load(arrayCart){
-        arrayCart = JSON.parse(localStorage.getItem("arrayCart"));
-        console.log("le localStorage a bien chargé");
-        console.log(arrayCart);
-    }
+    load(arrayCart, Cart){
+        let objectsInLocal = JSON.parse(localStorage.getItem("arrayCart"));
+        console.log(objectsInLocal);
+      
+        for(let key in objectsInLocal){
+      
+          let cart = new Cart(objectsInLocal[key].key, objectsInLocal[key].value);
+        
+          arrayCart.push(cart);
+      
+        };
+      }
 };
