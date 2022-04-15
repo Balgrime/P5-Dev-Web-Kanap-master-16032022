@@ -57,9 +57,11 @@ import { Storage } from "./storage.js";
 let arrayCart = [];
 
 class Cart {
-  constructor(key, value) {
+  constructor(key, value, id, color) {
       this.key = key;
       this.value = value;
+      this.id = id;
+      this.color = color;
   }
 };
 
@@ -84,7 +86,7 @@ class Cart {
 
 
 function addProductToArray(id, color, qty) {
-  let cart = new Cart(id + color, qty);
+  let cart = new Cart(id + color, qty, id, color);
 
   if(qty !== 0 && color !== ""){
     arrayCart.push(cart);
@@ -94,23 +96,13 @@ function addProductToArray(id, color, qty) {
 
 
 
-
-
-
-
-
-
-
-
 function changeQuantityOfProduct(id, color, chosenQuantity, quantityAlreadyThere, position){
   if(chosenQuantity !== 0 && color !== ""){
     let newQuantity = quantityAlreadyThere + chosenQuantity;
-    let newProduct = new Cart (id + color, newQuantity);
+    let newProduct = new Cart (id + color, newQuantity, id, color);
     arrayCart.splice(position, 1, newProduct);
   };
 };
-
-
 
 
 
@@ -124,15 +116,11 @@ function checkProduct(id, color){
 };
 
 
-console.log(arrayCart);
 Storage.load(arrayCart, Cart);
 console.log(arrayCart);
 
 
 addToCart.addEventListener("click", function(){
-  
-
-
 
   let idColor = document.getElementById("colors");
   let pickedColor = idColor.value;

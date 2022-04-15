@@ -1,5 +1,3 @@
-
-
 export let Storage = {
     save(key, value){
        //s console.log("le module est bien importé");
@@ -12,7 +10,7 @@ export let Storage = {
       
         for(let key in objectsInLocal){
       
-          let cart = new Cart(objectsInLocal[key].key, objectsInLocal[key].value);
+          let cart = new Cart(objectsInLocal[key].key, objectsInLocal[key].value, objectsInLocal[key].id, objectsInLocal[key].color);
         
           arrayCart.push(cart);
       
