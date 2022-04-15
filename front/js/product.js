@@ -120,6 +120,8 @@ Storage.load(arrayCart, Cart);
 console.log(arrayCart);
 
 
+let addToCart = document.getElementById("addToCart");
+
 addToCart.addEventListener("click", function(){
 
   let idColor = document.getElementById("colors");
