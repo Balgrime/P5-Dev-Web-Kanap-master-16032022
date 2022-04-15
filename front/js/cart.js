@@ -50,6 +50,10 @@ for (let product of arrayCart){
 
 
 
+
+
+
+
 function displayError(){
     document.getElementById("cart__items").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
   };
@@ -82,12 +86,31 @@ function displayNumberArticleAndTotal(){
 displayNumberArticleAndTotal();
 
 
+/*for(let a=0; a<arrayCart.length;a++){
+    let classQuantity = document.getElementsByClassName("itemQuantity")[a];
+    let activQuantity = parseInt(classQuantity.value);
+    console.log(activQuantity);
+};*/
 
 
-//let classQuantity = document.getElementsByClassName("itemQuantity")[product];
-//let activQuantity = parseInt(classQuantity.value);
-//console.log(activQuantity);
+addEventListener("change", function(){
+    
+    for(let a=0; a<arrayCart.length;a++){
+        console.log("une valeur a changée!");
+        let classQuantity = document.getElementsByClassName("itemQuantity")[a];
+        let activQuantity = parseInt(classQuantity.value);
+        console.log(activQuantity);
+        changeQuantityOfItemInArrayCart(arrayCart[a].id, arrayCart[a].color, activQuantity, a);
+    };
+    console.log(arrayCart);
+    Storage.save("arrayCart", arrayCart);
+});
 
 
 
-//addEventListener()
+function changeQuantityOfItemInArrayCart(id, color, chosenQuantity, position){
+      let newProduct = new Cart (id + color, chosenQuantity, id, color);
+      arrayCart.splice(position, 1, newProduct);
+  };
+
+
