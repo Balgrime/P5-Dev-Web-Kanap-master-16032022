@@ -14,6 +14,9 @@ class Cart {
 
 
 
+let total = 0;
+let numberItems = 0;
+
 Storage.load(arrayCart, Cart);
 console.log(arrayCart);
 
@@ -24,6 +27,9 @@ for (let product of arrayCart){
 
     function showValue(value){
         console.log(value.price);
+        total += value.price * product.value;
+        console.log(total);
+        numberItems += product.value;
            document.getElementById("cart__items").innerHTML += `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
                                                                     <div class="cart__item__img">
                                                                         <img src="${value.imageUrl}" alt="Photographie d'un canapé">
@@ -32,7 +38,7 @@ for (let product of arrayCart){
                                                                         <div class="cart__item__content__description">
                                                                         <h2>${value.name}</h2>
                                                                         <p>${product.color}</p>
-                                                                        <p>${value.price * product.value} €</p>
+                                                                        <p id='price${product.id}${product.color}' >${value.price * product.value} €</p>
                                                                         </div>
                                                                         <div class="cart__item__content__settings">
                                                                         <div class="cart__item__content__settings__quantity">
@@ -45,6 +51,9 @@ for (let product of arrayCart){
                                                                         </div>
                                                                     </div>
                                                                     </article>`
+
+            document.getElementById("totalPrice").innerHTML = total;
+            document.getElementById("totalQuantity").innerHTML = numberItems;
     };
 };
 
@@ -63,27 +72,6 @@ async function loadProductActif(idProductActif){
 
 
 
-
-
-
-
-let total = 0;
-function calculTotal(){
-    for(let i of arrayCart){
-        total += i.value;
-    };
-};
-calculTotal();
-console.log(total);
-
-function displayNumberArticleAndTotal(){
-    document.getElementById("totalPrice").innerHTML = total;
-    document.getElementById("totalQuantity").innerHTML = arrayCart.length;
-};
-
-displayNumberArticleAndTotal();
-
-
 /*for(let a=0; a<arrayCart.length;a++){
     let classQuantity = document.getElementsByClassName("itemQuantity")[a];
     let activQuantity = parseInt(classQuantity.value);
@@ -93,11 +81,6 @@ displayNumberArticleAndTotal();
 
 let idCartItems = document.getElementById("cart__items");
 idCartItems.addEventListener("change", changeQuantityOfItem);
-
-
-
-
-
 
 
    /*for(let a=0; a<arrayCart.length;a++){
@@ -114,8 +97,11 @@ idCartItems.addEventListener("change", changeQuantityOfItem);
 
 
 
+
 function changeQuantityOfItem(e){
         console.log("une value a changée");
+
+
     let cartKey = e.target.dataset.key;
     console.log(cartKey);
     let cartQuantity = parseInt(e.target.value);
@@ -126,23 +112,54 @@ function changeQuantityOfItem(e){
     console.log(cartColor);
 
 
+    
 
+    let newPrice = 0;
     let positionOfProductInArray = 0;
+    
+    let newTotal = 0;
+    let newNumberItems = 0;
 
     for (let a = 0; a<arrayCart.length; a++){
         if (arrayCart[a].key === cartKey){
           positionOfProductInArray = a;
           console.log(positionOfProductInArray);
+        loadProductActif(cartId).then(calcPrice);
+
+
+            function calcPrice(value){
+                newPrice = value.price * cartQuantity;
+                document.getElementById("price" + cartKey).innerHTML = newPrice;
+            };
         };
+
+            loadProductActif(cartId).then(displayNewTotal);
+
+            function displayNewTotal(value){
+                newTotal += value.price * arrayCart[a].value;
+                console.log(total);
+                newNumberItems += arrayCart[a].value;
+                document.getElementById("totalPrice").innerHTML = newTotal;
+                document.getElementById("totalQuantity").innerHTML = newNumberItems;
+
+            };
     };
-
-
 
     let newProduct = new Cart (cartKey, cartQuantity, cartId, cartColor);
     arrayCart.splice(positionOfProductInArray, 1, newProduct);
     
 
     Storage.save("arrayCart", arrayCart);
+
+
+    /*let newTotal = 0;
+    let newNumberItems = 0;
+
+    for(let product of arrayCart){
+        newTotal += product.price * product.value;
+        console.log(total);
+        newNumberItems += product.value;
+        document.getElementById("totalPrice").innerHTML = newTotal;
+        document.getElementById("totalQuantity").innerHTML = newNumberItems;
+    };*/
   };
-
-
