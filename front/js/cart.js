@@ -81,6 +81,7 @@ async function loadProductActif(idProductActif){
 
 let idCartItems = document.getElementById("cart__items");
 idCartItems.addEventListener("change", changeQuantityOfItem);
+idCartItems.addEventListener("click", removeOneProduct);
 
 
    /*for(let a=0; a<arrayCart.length;a++){
@@ -133,7 +134,7 @@ function changeQuantityOfItem(e){
             };
         };
 
-            loadProductActif(cartId).then(displayNewTotal);
+            loadProductActif(arrayCart[a].id).then(displayNewTotal);
 
             function displayNewTotal(value){
                 newTotal += value.price * arrayCart[a].value;
@@ -163,3 +164,81 @@ function changeQuantityOfItem(e){
         document.getElementById("totalQuantity").innerHTML = newNumberItems;
     };*/
   };
+
+
+
+
+
+
+
+
+
+function removeOneProduct(e){
+
+    if (e.target.classList.contains('deleteItem')){
+        console.log("une value a été removed");
+
+
+        let cartKey = e.target.dataset.key;
+        console.log(cartKey);
+        let cartId = e.target.dataset.id;
+        console.log(cartId);
+
+
+
+        let positionOfProductInArray = 0;
+        let newTotal = 0;
+        let newNumberItems = 0;
+        document.getElementById("cart__items").innerHTML = "";
+
+
+
+        for (let a = 0; a<arrayCart.length; a++){
+            if (arrayCart[a].key === cartKey){
+            positionOfProductInArray = a;
+            console.log(positionOfProductInArray);
+            arrayCart.splice(positionOfProductInArray, 1);
+            Storage.save("arrayCart", arrayCart);    
+            };
+        };
+
+
+        for (let a = 0; a<arrayCart.length; a++){
+               loadProductActif(arrayCart[a].id).then(displayNewTotal);
+
+                function displayNewTotal(value){
+                    newTotal += value.price * arrayCart[a].value;
+                    console.log(newTotal);
+                    newNumberItems += arrayCart[a].value;
+                    document.getElementById("totalPrice").innerHTML = newTotal;
+                    document.getElementById("totalQuantity").innerHTML = newNumberItems;
+
+                    document.getElementById("cart__items").innerHTML += `<article class="cart__item" data-id="${arrayCart[a].id}" data-color="${arrayCart[a].color}">
+                                                                    <div class="cart__item__img">
+                                                                        <img src="${value.imageUrl}" alt="Photographie d'un canapé">
+                                                                    </div>
+                                                                    <div class="cart__item__content">
+                                                                        <div class="cart__item__content__description">
+                                                                        <h2>${value.name}</h2>
+                                                                        <p>${arrayCart[a].color}</p>
+                                                                        <p id='price${arrayCart[a].id}${arrayCart[a].color}' >${value.price * arrayCart[a].value} €</p>
+                                                                        </div>
+                                                                        <div class="cart__item__content__settings">
+                                                                        <div class="cart__item__content__settings__quantity">
+                                                                            <p>Qté : </p>
+                                                                            <input data-key= '${arrayCart[a].id}${arrayCart[a].color}' data-id= '${arrayCart[a].id}' data-color= '${arrayCart[a].color}' type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${arrayCart[a].value}">
+                                                                        </div>
+                                                                        <div class="cart__item__content__settings__delete">
+                                                                            <p data-key= '${arrayCart[a].id}${arrayCart[a].color}' data-id= '${arrayCart[a].id}' data-color= '${arrayCart[a].color}' class="deleteItem">Supprimer</p>
+                                                                        </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    </article>`
+                };
+        };
+    };
+    if (arrayCart.length == 0){
+        document.getElementById("totalPrice").innerHTML = "";
+        document.getElementById("totalQuantity").innerHTML = "";
+    };
+};
