@@ -227,22 +227,19 @@ let form = document.getElementsByClassName("cart__order__form")[0];
 
 let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-let addressErrorMsg = document.getElementById("addressErrorMsg");
+//let addressErrorMsg = document.getElementById("addressErrorMsg");
 let cityErrorMsg = document.getElementById("cityErrorMsg");
 let emailErrorMsg = document.getElementById("emailErrorMsg");
 
 
 
-let contact = {};
 
 form.addEventListener("submit", (e) =>{
     console.log("c'est bien cliqué!");
     e.preventDefault();
-
-    if (emailErrorMsg.innerHTML !== ""){
-        console.log("il faut revoir l'email!");
-        console.log(emailErrorMsg.innerHTML);
-    } else {
+    let productsID = [];
+    createProductsID(productsID);
+    if (emailErrorMsg.innerHTML == "" && firstNameErrorMsg.innerHTML == "" && lastNameErrorMsg.innerHTML == "" && cityErrorMsg.innerHTML == "" && productsID.length > 0){
         let order = {
             contact : {
                 firstName: firstName.value,
@@ -259,42 +256,71 @@ form.addEventListener("submit", (e) =>{
     };
 });
 
-firstName.addEventListener("change", (e) =>{
-
-});
-
-function ValidateEmail() 
-{
- if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value))
-  {
-    console.log("email valide!");
-    emailErrorMsg.innerHTML = "";
-    return (true);
-  };
-  emailErrorMsg.innerHTML = "cette adresse email n'est pas valide";
-    return (false);
+function ValidateEmail() {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value)){
+        console.log("email valide!");
+        emailErrorMsg.innerHTML = "";
+    } else {
+        emailErrorMsg.innerHTML = "cette adresse email n'est pas valide";
+    };
 };
+
 
 function validateFirstName(){
-
+    let str = (firstName.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if(/^[a-zA-Z\-]+$/.test(str)){
+        console.log("firstname valide");
+        firstNameErrorMsg.innerHTML = "";
+    } else {
+        firstNameErrorMsg.innerHTML = "Le prénom ne peut contenir que des lettres majuscules ou minucules allant de A à Z et le tiret -";
+    };
 };
+
+function validateLastName(){
+    let str = (lastName.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if(/^[a-zA-Z\-]+$/.test(str)){
+        console.log("name valide");
+        lastNameErrorMsg.innerHTML = "";
+    } else {
+        lastNameErrorMsg.innerHTML = "Le nom ne peut contenir que des lettres majuscules ou minucules allant de A à Z et le tiret -";
+    };
+};
+
+function validateCity(){
+    let str = (city.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if(/^[a-zA-Z\-]+$/.test(str)){
+        console.log("city valide");
+        cityErrorMsg.innerHTML = "";
+    } else {
+        cityErrorMsg.innerHTML = "La ville ne peut contenir que des lettres majuscules ou minucules allant de A à Z et le tiret -";
+    };
+};
+
 
 email.addEventListener("change", () =>{
     ValidateEmail();
 });
 
+firstName.addEventListener("change", () =>{
+    validateFirstName();
+});
+
+lastName.addEventListener("change", () =>{
+    validateLastName();
+});
+
+city.addEventListener("change", () =>{
+    validateCity();
+});
 
 
 
-
-
-let productsID = [];
-for (let a = 0; a<arrayCart.length; a++){
-    productsID.push(arrayCart[a].id);
+function createProductsID(productsID){
+    for (let a = 0; a<arrayCart.length; a++){
+        productsID.push(arrayCart[a].id);
+    };
+    console.log(productsID);
 };
-console.log(productsID);
-console.log(contact);
-
 
 
 async function sendPostRequest(order){
