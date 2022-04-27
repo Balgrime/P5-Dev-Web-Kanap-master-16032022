@@ -76,32 +76,17 @@ async function loadProductActif(idProductActif){
 
 
 
-/*for(let a=0; a<arrayCart.length;a++){
-    let classQuantity = document.getElementsByClassName("itemQuantity")[a];
-    let activQuantity = parseInt(classQuantity.value);
-    console.log(activQuantity);
-};*/
-
 
 let idCartItems = document.getElementById("cart__items");
 idCartItems.addEventListener("change", changeQuantityOfItem);
 idCartItems.addEventListener("click", removeOneProduct);
 
 
-   /*for(let a=0; a<arrayCart.length;a++){
-        console.log("une valeur a changée!");
-        let classQuantity = document.getElementsByClassName("itemQuantity")[a];
-        let activQuantity = parseInt(classQuantity.value);
-        console.log(activQuantity);
-        changeQuantityOfItemInArrayCart(arrayCart[a].id, arrayCart[a].color, activQuantity, a);
-    };
-    };
-    console.log(arrayCart);
-    Storage.save("arrayCart", arrayCart);
-});*/
 
-
-
+function calcPrice(value, cartQuantity, cartKey, newPrice){
+    newPrice = value.price * cartQuantity;
+    document.getElementById("price" + cartKey).innerHTML = newPrice;
+};
 
 function changeQuantityOfItem(e){
         console.log("une value a changée");
@@ -127,13 +112,8 @@ function changeQuantityOfItem(e){
         if (arrayCart[a].key === cartKey){
           positionOfProductInArray = a;
           console.log(positionOfProductInArray);
-        loadProductActif(cartId).then(calcPrice);
-
-
-            function calcPrice(value){
-                newPrice = value.price * cartQuantity;
-                document.getElementById("price" + cartKey).innerHTML = newPrice;
-            };
+        loadProductActif(cartId).then(function(value){
+            calcPrice(value, cartQuantity, cartKey, newPrice)});
         };
 
             loadProductActif(arrayCart[a].id).then(displayNewTotal);
@@ -153,21 +133,7 @@ function changeQuantityOfItem(e){
     
 
     Storage.save("arrayCart", arrayCart);
-
-
-    /*let newTotal = 0;
-    let newNumberItems = 0;
-
-    for(let product of arrayCart){
-        newTotal += product.price * product.value;
-        console.log(total);
-        newNumberItems += product.value;
-        document.getElementById("totalPrice").innerHTML = newTotal;
-        document.getElementById("totalQuantity").innerHTML = newNumberItems;
-    };*/
   };
-
-
 
 
 
@@ -252,43 +218,105 @@ function removeOneProduct(e){
 
 
 
-
-
-import { Contact } from "./contact.js";
-
 let firstName = document.getElementById("firstName");
 let lastName = document.getElementById("lastName");
 let address = document.getElementById("address");
 let city = document.getElementById("city");
 let email = document.getElementById("email");
-let order = document.getElementById("order");
+let form = document.getElementsByClassName("cart__order__form")[0];
 
 let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 let addressErrorMsg = document.getElementById("addressErrorMsg");
 let cityErrorMsg = document.getElementById("cityErrorMsg");
 let emailErrorMsg = document.getElementById("emailErrorMsg");
-let orderErrorMsg = document.getElementById("orderErrorMsg");
 
 
 
-order.addEventListener("submit", (e) =>{
-    let ErrorMsg = [];
+let contact = {};
 
-    if(firstName.value == "test"){
-        console.log("test concluant");
-        firstNameErrorMsg.innerHTML = "ceci est un test réussi";
-        ErrorMsg.push(firstNameErrorMsg);
-    }
+form.addEventListener("submit", (e) =>{
+    console.log("c'est bien cliqué!");
+    e.preventDefault();
 
-
-
-
-
-
-    if (ErrorMsg.length > 0){
-        e.preventDefault();
+    if (emailErrorMsg.innerHTML !== ""){
+        console.log("il faut revoir l'email!");
+        console.log(emailErrorMsg.innerHTML);
     } else {
-        let contact = new Contact(firstName, lastName, address, city, email);
-    }
+        let order = {
+            contact : {
+                firstName: firstName.value,
+                lastName: lastName.value,
+                address: address.value,
+                city: city.value,
+                email: email.value,
+            },
+            products: productsID,
+        } 
+        console.log(order);
+
+        sendPostRequest(order).then(showPost).then(getOrderId).catch(displayErrorPost);
+    };
 });
+
+firstName.addEventListener("change", (e) =>{
+
+});
+
+function ValidateEmail() 
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value))
+  {
+    console.log("email valide!");
+    emailErrorMsg.innerHTML = "";
+    return (true);
+  };
+  emailErrorMsg.innerHTML = "cette adresse email n'est pas valide";
+    return (false);
+};
+
+function validateFirstName(){
+
+};
+
+email.addEventListener("change", () =>{
+    ValidateEmail();
+});
+
+
+
+
+
+
+let productsID = [];
+for (let a = 0; a<arrayCart.length; a++){
+    productsID.push(arrayCart[a].id);
+};
+console.log(productsID);
+console.log(contact);
+
+
+
+async function sendPostRequest(order){
+    return ( await fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(order),
+    headers: {
+        "Content-Type": "application/json",
+    }
+}));
+};
+
+function showPost(value){
+    console.log(value);
+    return (value.json());
+};
+
+function displayErrorPost(error){
+    console.log(error);
+};
+
+function getOrderId(value){
+    console.log(value.orderId);
+    document.location.href = "../html/confirmation.html?orderId=" + value.orderId;
+};
