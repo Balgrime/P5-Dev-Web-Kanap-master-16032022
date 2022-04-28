@@ -4,6 +4,13 @@ import { Storage } from "./storage.js";
 let arrayCart = [];
 
 class Cart {
+    /**
+   * Classe permettant de créer un objet pour chaque canapé ayant un modèle ou une couleur différents.
+   * @param {string} key correspond à l'id + couleur du canapé
+   * @param {number} value la quantité de canapés
+   * @param {string} id l'id du canapé
+   * @param {string} color la couleur du canapé
+   */
     constructor(key, value, id, color) {
         this.key = key;
         this.value = value;
@@ -20,17 +27,23 @@ let numberItems = 0;
 Storage.load(arrayCart, Cart);
 console.log(arrayCart);
 
-
+/**
+ * Pour chaque produit compris dans le tableau, on requête le produit de l'api via son id correspondante,
+ * puis on affiche ses informations sur la page.
+ */
 for (let product of arrayCart){
     loadProductActif(product.id).then(function(value){
         showValue(value, product);
 
     }).catch(displayError);
     console.log(product.id);
-
-    
 };
 
+/**
+ * On affiche les informations en puisant à la fois sur l'api et également dans le tableau de produits.
+ * @param {Object} value on extraie le prix, le nom, l'image du canapé depuis l'api
+ * @param {Object} product on récupère la couleur et la quantité du produit dans le tableau créé
+ */
 function showValue(value, product){
     console.log(value.price);
     total += value.price * product.value;
@@ -63,34 +76,59 @@ function showValue(value, product){
 };
 
 
-
+/**
+ * Fonction qui signale lorsque la promesse n'a pas pu être tenue.
+ */
 function displayError(error){
     console.log(error);
     document.getElementById("cart__items").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
-  };
+};
   
 
+/**
+ * Requête les informations du produit actif de l'api.
+ * @returns l'objet actif contenu dans l'api.
+ */
 async function loadProductActif(idProductActif){
     return (await fetch("http://localhost:3000/api/products/" + idProductActif)).json();
 };
 
 
 
-
+/**
+ * Délégation d'événements : 
+ * lorsqu'un changement de valeur est détecté au niveau de la balise avec id cart__items, la fonction de changement de quantités se déclenche,
+ * idem lorsqu'un clic est détecté dans cette balise, la fonction qui retire un produit se déclenche.
+ */
 let idCartItems = document.getElementById("cart__items");
 idCartItems.addEventListener("change", changeQuantityOfItem);
 idCartItems.addEventListener("click", removeOneProduct);
 
 
 
+
+/**
+ * Calcule le prix d'un modèle de canapé.
+ * @param {Object} value l'objet récupéré de l'api
+ * @param {number} cartQuantity la quantité présente dans le tableau
+ * @param {string} cartKey la clef du canapé dans le tableau
+ * @param {number} newPrice le nouveau prix à calculer
+ */
 function calcPrice(value, cartQuantity, cartKey, newPrice){
     newPrice = value.price * cartQuantity;
     document.getElementById("price" + cartKey).innerHTML = newPrice;
 };
 
+
+
+/**
+ * Fonction qui change dynamiquement la quantité d'un canapé, qui calcule son nouveau prix, 
+ * ainsi que le nouveau total et prix global, puis remplace le canapé correspondant dans le tableau
+ * et enfin le sauvegarde dans le localStorage.
+ * @param {*} e
+ */
 function changeQuantityOfItem(e){
         console.log("une value a changée");
-
 
     let cartKey = e.target.dataset.key;
     console.log(cartKey);
@@ -124,10 +162,8 @@ function changeQuantityOfItem(e){
                 newNumberItems += arrayCart[a].value;
                 document.getElementById("totalPrice").innerHTML = newTotal;
                 document.getElementById("totalQuantity").innerHTML = newNumberItems;
-
             };
     };
-
     let newProduct = new Cart (cartKey, cartQuantity, cartId, cartColor);
     arrayCart.splice(positionOfProductInArray, 1, newProduct);
     
@@ -138,11 +174,14 @@ function changeQuantityOfItem(e){
 
 
 
-
-
-
+/**
+ * Fonction qui enlève un produit après que l'utilisateur ai cliqué sur le bouton 'supprimer' :
+ * la fonction fait d'abord le tour du tableau jusqu'à trouver le canapé correspondant, puis l'enlève du tableau,
+ * puis, après avoir supprimé les anciennes infos des articles de la page,
+ * elle réaffiche les nouvelles données (moins l'élément supprimé) grâce à l'api et au tableau.
+ * @param {*} e
+ */
 function removeOneProduct(e){
-
     if (e.target.classList.contains('deleteItem')){
         console.log("une value a été removed");
 
@@ -216,8 +255,6 @@ function removeOneProduct(e){
 
 
 
-
-
 let firstName = document.getElementById("firstName");
 let lastName = document.getElementById("lastName");
 let address = document.getElementById("address");
@@ -234,6 +271,10 @@ let emailErrorMsg = document.getElementById("emailErrorMsg");
 
 
 
+/**
+ * Lorsqu'on clique sur le bouton submit, si tous les champs du formulaire sont bien remplis 
+ * et que le panier n'est pas vide, alors on lance la requête POST.
+ */
 form.addEventListener("submit", (e) =>{
     console.log("c'est bien cliqué!");
     e.preventDefault();
@@ -256,6 +297,10 @@ form.addEventListener("submit", (e) =>{
     };
 });
 
+
+/**
+ * Fonction qui vérifie la bonne conformité du champ email.
+ */
 function ValidateEmail() {
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value)){
         console.log("email valide!");
@@ -266,6 +311,10 @@ function ValidateEmail() {
 };
 
 
+/**
+ * Fonction qui transforme la valeur du champ en string sans accent, puis vérifie qu'elle ne comprend que
+ * les lettres majuscules, minuscules et tiret -
+ */
 function validateFirstName(){
     let str = (firstName.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if(/^[a-zA-Z\-]+$/.test(str)){
@@ -276,6 +325,10 @@ function validateFirstName(){
     };
 };
 
+/**
+ * Fonction qui transforme la valeur du champ en string sans accent, puis vérifie qu'elle ne comprend que
+ * les lettres majuscules, minuscules et tiret -
+ */
 function validateLastName(){
     let str = (lastName.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if(/^[a-zA-Z\-]+$/.test(str)){
@@ -286,6 +339,10 @@ function validateLastName(){
     };
 };
 
+/**
+ * Fonction qui transforme la valeur du champ en string sans accent, puis vérifie qu'elle ne comprend que
+ * les lettres majuscules, minuscules et tiret -
+ */
 function validateCity(){
     let str = (city.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if(/^[a-zA-Z\-]+$/.test(str)){
@@ -314,7 +371,10 @@ city.addEventListener("change", () =>{
 });
 
 
-
+/**
+ * Fonction qui créé un tableau comprenant les ID des canapés actuellement contenus dans le tableau.
+ * @param {string} productsID 
+ */
 function createProductsID(productsID){
     for (let a = 0; a<arrayCart.length; a++){
         productsID.push(arrayCart[a].id);
@@ -322,7 +382,11 @@ function createProductsID(productsID){
     console.log(productsID);
 };
 
-
+/**
+ * Fonction qui lance la requête POST à l'api.
+ * @param {*} order 
+ * @returns un objet comprenant en attributs un objet contact, les id, et un numéro de commande.
+ */
 async function sendPostRequest(order){
     return ( await fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -333,15 +397,28 @@ async function sendPostRequest(order){
 }));
 };
 
+/**
+ * fonction qui applique .json 
+ * @param {string} value 
+ * @returns le string pris en argument auquel on a appliqué la méthode.json()
+ */
 function showPost(value){
     console.log(value);
     return (value.json());
 };
 
+/**
+ * Fonction qui s'exécute lorsque la requête n'aboutit pas.
+ * @param {*} error 
+ */
 function displayErrorPost(error){
     console.log(error);
 };
 
+/**
+ * Fonction qui envoie vers la page confirmation et transmet dans l'URL de cette dernière : le numéro de commande.
+ * @param {Object} value 
+ */
 function getOrderId(value){
     console.log(value.orderId);
     document.location.href = "../html/confirmation.html?orderId=" + value.orderId;

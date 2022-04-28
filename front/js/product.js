@@ -1,28 +1,27 @@
+/**
+ * Permet de récupérer l'identifiant du produit actif depuis l'URL.
+ */
 let urlPageProduct = window.location.search;
-
 let urlSearchParams = new URLSearchParams(urlPageProduct);
 let idProductActif = urlSearchParams.get("id");
 
 
 
-
-/*document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await loadProductActif();
-  } catch {
-    document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
-  }
-});*/
-
-
 loadProductActif().then(displayData).catch(displayError);
   
 
+/**
+ * Requête les informations du produit actif de l'api.
+ * @returns l'objet actif contenu dans l'api.
+ */
 async function loadProductActif(){
   return (await fetch("http://localhost:3000/api/products/" + idProductActif)).json();
 };
 
-
+/**
+ * Va afficher sur la page les attributs de l'objet pris en argument.
+ * @param {Object} productActif le produit sélectionné
+ */
 function displayData(productActif){
 
   document.getElementById("title").innerHTML = productActif.name;
@@ -38,6 +37,9 @@ function displayData(productActif){
   }
 };
 
+/**
+ * Fonction qui signale lorsque la promesse n'a pas pu être tenue.
+ */
 function displayError(){
   document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
 };
@@ -52,11 +54,18 @@ function displayError(){
 import { Storage } from "./storage.js";
 
 
-
-
 let arrayCart = [];
 
+
+
 class Cart {
+  /**
+   * Classe permettant de créer un objet pour chaque canapé ayant un modèle ou une couleur différents.
+   * @param {string} key correspond à l'id + couleur du canapé
+   * @param {number} value la quantité de canapés
+   * @param {string} id l'id du canapé
+   * @param {string} color la couleur du canapé
+   */
   constructor(key, value, id, color) {
       this.key = key;
       this.value = value;
@@ -67,24 +76,12 @@ class Cart {
 
 
 
-
-
-/*function load(arrayCart){
-  let objectsInLocal = JSON.parse(localStorage.getItem("arrayCart"));
-  console.log(objectsInLocal);
-
-  for(let key in objectsInLocal){
-
-    let cart = new Cart(objectsInLocal[key].key, objectsInLocal[key].value);
-  
-    arrayCart.push(cart);
-
-  };
-};*/
-
-
-
-
+/**
+ * Crée un nouvel objet lorsqu'on veut ajouter un canapé et l'ajoute au tableau arrayCart.
+ * @param {string} id l'identifiant du canapé actif
+ * @param {string} color la couleur choisie
+ * @param {number} qty la quantité choisie
+ */
 function addProductToArray(id, color, qty) {
   let cart = new Cart(id + color, qty, id, color);
 
@@ -95,7 +92,14 @@ function addProductToArray(id, color, qty) {
 };
 
 
-
+/**
+ * Modifie la quantité d'un canapé lorsque celui-ci est déjà présent dans le tableau.
+ * @param {string} id l'identifiant du canapé
+ * @param {string} color la couleur choisie
+ * @param {number} chosenQuantity la quantité choisie
+ * @param {number} quantityAlreadyThere la quantité qui était déjà présente dans le tableau
+ * @param {number} position la position à laquelle se situe le canapé déjà présent dans le tableau
+ */
 function changeQuantityOfProduct(id, color, chosenQuantity, quantityAlreadyThere, position){
   if(chosenQuantity !== 0 && color !== ""){
     let newQuantity = quantityAlreadyThere + chosenQuantity;
@@ -105,7 +109,12 @@ function changeQuantityOfProduct(id, color, chosenQuantity, quantityAlreadyThere
 };
 
 
-
+/**
+ * Vérifie si un canapé est déjà présent dans le tableau.
+ * @param {string} id l'id du canapé
+ * @param {string} color la couleur du canapé
+ * @returns true si le même canapé est déjà présent
+ */
 function checkProduct(id, color){
   for (let a = 0; a<arrayCart.length; a++){
     console.log(arrayCart[a].key);
@@ -122,6 +131,13 @@ console.log(arrayCart);
 
 let addToCart = document.getElementById("addToCart");
 
+/**
+ * Au clic sur le bouton 'addToCart', une fonction anonyme va :
+ * vérifier la couleur et la quantité actuellement choisies pour le canapé,
+ * scruter le tableau de canapés pour voir si ce dernier est là, et connaitre sa position et quantité déjà présente,
+ * s'il n'est pas là, il l'ajoute au tableau puis sauvegarde dans le localStorage,
+ * s'il est déjà là, il modifie l'élément présent puis sauvegarde dans le localStorage.
+ */
 addToCart.addEventListener("click", function(){
 
   let idColor = document.getElementById("colors");
@@ -143,7 +159,6 @@ addToCart.addEventListener("click", function(){
   };
 
 
-
   if (checkProduct(idProductActif, pickedColor) !== true){
     console.log("le produit n'est pas encore là");
     addProductToArray(idProductActif, pickedColor, chosenQuantity);
@@ -153,130 +168,5 @@ addToCart.addEventListener("click", function(){
     changeQuantityOfProduct(idProductActif, pickedColor, chosenQuantity, valueProductAlreadyThere, positionOfProductInArray);
     Storage.save("arrayCart", arrayCart);
   };
-
   console.log(arrayCart);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*function addElementToLocalStorageWhenNotAlreadyThere(quantity, color, id, elementLinear){
-  if(quantity !== 0 && color !== ""){
-    localStorage.setItem(id + color, elementLinear);
-  };
-};
-
-let addToCart = document.getElementById("addToCart");
-
-addToCart.addEventListener("click", function(){
-
-  
-let elementAlreadyThere = false;
-
-
-let idQuantity = document.getElementById("quantity");
-let chosenQuantity = parseInt(idQuantity.value);
-console.log(chosenQuantity);
-
-let idColor = document.getElementById("colors");
-let pickedColor = idColor.value;
-console.log(pickedColor);
-
-let elementJson = {
-  id : idProductActif,
-  quantity : chosenQuantity,
-  color : pickedColor
-}
-let elementLinear = JSON.stringify(elementJson);
-
-function checkElement(){
-  for(let a = 0; a < localStorage.length; a++){
-    if (localStorage.key(a).indexOf(idProductActif) !== -1 && localStorage.key(a).indexOf(pickedColor) !== -1){
-      elementAlreadyThere = true;
-      console.log(elementAlreadyThere);
-    };
-    console.log(elementAlreadyThere);
-    console.log(localStorage.key(a));
-  };
-};
-
-let elementJsonAlreadyInBasket = {};
-function changeStringInLocalToJson(){
-  let elementLinearAlreadyInBasket = localStorage.getItem(idProductActif + pickedColor);
-  elementJsonAlreadyInBasket = JSON.parse(elementLinearAlreadyInBasket);
-  console.log(elementJsonAlreadyInBasket);
-};
-
-let newQuantityInBasket = 0;
-function changeQuantityWhenAlreadyThere(){
-  let quantityAlreadyInBasket = parseInt(elementJsonAlreadyInBasket.quantity);
-  console.log(quantityAlreadyInBasket);
-  newQuantityInBasket = quantityAlreadyInBasket + chosenQuantity;
-  console.log(newQuantityInBasket);
-};
-
-function replaceElementWithNewQuantity(){
-  let replacementElementJson = {
-    id : idProductActif,
-    quantity : newQuantityInBasket,
-    color : pickedColor
-  }
-  let replacementElementLinear = JSON.stringify(replacementElementJson);
-  if(chosenQuantity !== 0 && pickedColor !== ""){
-  localStorage.setItem(idProductActif + pickedColor, replacementElementLinear);
-  };
-};
-
-  checkElement();
-
-  if(elementAlreadyThere == false){
-    addElementToLocalStorageWhenNotAlreadyThere(chosenQuantity, pickedColor, idProductActif, elementLinear);
-  } else {
-    changeStringInLocalToJson();
-    changeQuantityWhenAlreadyThere();
-    replaceElementWithNewQuantity();
-  }
-  console.log(chosenQuantity);
-  console.log(pickedColor);
-});
-
-
-
-/*fetch("http://localhost:3000/api/products/" + idProductActif)
-  .then(function(res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-  .then(function(objectActif) {
-    console.log(objectActif);
-    //let objectActif = value.find(element => element._id === idProductActif);
-    console.log(objectActif);
-    document.getElementById("title").innerHTML = objectActif.name;
-    let imgCanapé = document.getElementsByClassName("item__img");
-    imgCanapé[0].innerHTML = `<img src="${objectActif.imageUrl}" alt="${objectActif.altTxt}">`;
-
-    document.getElementById("price").innerHTML = objectActif.price;
-    document.getElementById("description").innerHTML = objectActif.description;
-
-    for (let chosenColor of objectActif.colors){
-        document.getElementById("colors").innerHTML += `<option value="${chosenColor}">${chosenColor}</option>`
-        console.log(chosenColor);
-    }
-  })
-  .catch(function(err) {
-    document.getElementById("title").innerHTML = "<p>Item non chargé, veuillez vérifier la connexion du serveur de l'api</p>"
-    // Une erreur est survenue
-});*/
